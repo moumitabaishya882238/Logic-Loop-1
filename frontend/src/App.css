@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Public+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* Government Dark Theme */
+.gov-theme {
+  background: #0F172A;
+  color: #F1F5F9;
+  min-height: 100vh;
+  font-family: 'Public Sans', sans-serif;
+}
+
+.gov-theme h1, .gov-theme h2, .gov-theme h3, .gov-theme h4 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.gov-theme .mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Citizen Light Theme */
+.citizen-theme {
+  background: #FFFFFF;
+  color: #0F172A;
+  min-height: 100vh;
+  font-family: 'Public Sans', sans-serif;
+}
+
+.citizen-theme h1, .citizen-theme h2, .citizen-theme h3 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+}
+
+/* SOS Pulse Animation */
+@keyframes sos-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 30px rgba(220, 38, 38, 0);
+  }
+}
+
+.sos-pulse {
+  animation: sos-pulse 2s infinite;
+}
+
+/* Alert Blink */
+@keyframes blink {
+  0%, 50%, 100% { opacity: 1; }
+  25%, 75% { opacity: 0.3; }
+}
+
+.blink-alert {
+  animation: blink 1.5s infinite;
+}
+
+/* Leaflet Map Styling */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+/* Custom scrollbar for dark theme */
+.gov-theme ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.gov-theme ::-webkit-scrollbar-track {
+  background: #1E293B;
+}
+
+.gov-theme ::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+.gov-theme ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Stat Card Glow Effect */
+.stat-card-glow {
+  box-shadow: 0 0 20px rgba(5, 150, 105, 0.3);
+  transition: box-shadow 0.3s ease;
+}
+
+.stat-card-glow:hover {
+  box-shadow: 0 0 30px rgba(5, 150, 105, 0.5);
+}

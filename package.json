@@ -1,0 +1,22 @@
+{
+  "name": "surakshanet-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "free-ports": "kill-port 3000 8001 8002",
+    "predev": "npm run free-ports",
+    "predev:all": "npm run free-ports",
+    "predev:backend": "kill-port 8001",
+    "predev:web": "kill-port 3000",
+    "predev:cctv": "kill-port 8002",
+    "dev": "concurrently -k -n BACKEND,WEB -c cyan,magenta \"npm --prefix backend run dev\" \"npm --prefix frontend start\"",
+    "dev:all": "concurrently -k -n BACKEND,WEB,CCTV -c cyan,magenta,green \"npm --prefix backend run dev\" \"npm --prefix frontend start\" \"backend\\.venv\\Scripts\\python.exe -m uvicorn cctv_service:app --host 0.0.0.0 --port 8002 --reload --app-dir backend\"",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:web": "npm --prefix frontend start",
+    "dev:cctv": "backend\\.venv\\Scripts\\python.exe -m uvicorn cctv_service:app --host 0.0.0.0 --port 8002 --reload --app-dir backend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "kill-port": "^2.0.1"
+  }
+}
