@@ -1,0 +1,20 @@
+# SurakshaNet — AI CCTV Service Dependencies
+# Install with: pip install -r requirements.txt
+
+# ── Core ML / Vision ─────────────────────────────────────────────────────────
+torch>=2.1.0
+torchvision>=0.16.0
+ultralytics>=8.0.200          # YOLOv8 (pulls opencv-python automatically)
+opencv-python-headless>=4.8.0 # Headless for server environments
+
+# ── API Server ───────────────────────────────────────────────────────────────
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+pydantic>=2.5.0
+
+# ── HTTP Client ──────────────────────────────────────────────────────────────
+requests>=2.31.0
+
+# ── Utilities ────────────────────────────────────────────────────────────────
+python-dotenv>=1.0.0          # Optional: load .env for config overrides
+numpy>=1.24.0                 # Pulled by torch/cv, listed for clarity
