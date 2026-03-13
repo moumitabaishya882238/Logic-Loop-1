@@ -1,0 +1,56 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files
+.env
+.env.*
+**/.env
+**/.env.*
+
+# Build outputs
+build/
+dist/
+coverage/
+.next/
+out/
+
+# React Native / Metro / Expo
+.expo/
+.expo-shared/
+**/.expo/
+**/.expo-shared/
+metro-cache/
+*.keystore
+*.jks
+*.p12
+*.key
+
+# Android
+**/android/.gradle/
+**/android/app/build/
+**/android/build/
+
+# iOS
+**/ios/Pods/
+**/ios/build/
+**/ios/DerivedData/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
