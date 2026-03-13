@@ -9,6 +9,11 @@ import SOSAlerts from "@/pages/gov/SOSAlerts";
 import CCTVAlerts from "@/pages/gov/CCTVAlerts";
 import DisasterAlerts from "@/pages/gov/DisasterAlerts";
 import ResponsePanel from "@/pages/gov/ResponsePanel";
+import NGOPartners from "@/pages/gov/NGOPartners";
+import NGORequests from "@/pages/gov/NGORequests";
+import JoinNGO from "@/pages/ngo/JoinNGO";
+import NGOLogin from "@/pages/ngo/NGOLogin";
+import NGODashboard from "@/pages/ngo/NGODashboard";
 
 function App() {
   return (
@@ -25,6 +30,13 @@ function App() {
           <Route path="/gov/cctv-alerts" element={<CCTVAlerts />} />
           <Route path="/gov/disaster-alerts" element={<DisasterAlerts />} />
           <Route path="/gov/response" element={<ResponsePanel />} />
+          <Route path="/gov/ngo-partners" element={<NGOPartners />} />
+          <Route path="/gov/ngo-requests" element={<NGORequests />} />
+
+          {/* NGO onboarding route */}
+          <Route path="/ngo/join" element={<JoinNGO />} />
+          <Route path="/ngo/login" element={<NGOLogin />} />
+          <Route path="/ngo/dashboard" element={<NGODashboard />} />
         </Routes>
       </BrowserRouter>
       <Toaster />

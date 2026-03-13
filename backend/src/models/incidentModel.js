@@ -28,6 +28,11 @@ function createIncidentDoc(body, forcedType) {
       body.voiceDurationSeconds != null ? Number(body.voiceDurationSeconds) : null,
     responderId: null,
     responderName: null,
+    responderType: null,
+    ngoPartner: null,
+    ngoDistanceKm: null,
+    droneDispatched: false,
+    droneDispatchTime: null,
     timestamp: new Date().toISOString(),
     responseTime: null,
   };

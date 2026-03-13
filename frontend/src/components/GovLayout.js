@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Map, AlertTriangle, Camera, CloudLightning, Users, Activity } from 'lucide-react';
+import { Home, Map, AlertTriangle, Camera, CloudLightning, Users, Activity, HeartHandshake, FilePlus2 } from 'lucide-react';
 
 export const GovLayout = ({ children }) => {
   const location = useLocation();
@@ -11,6 +11,8 @@ export const GovLayout = ({ children }) => {
     { path: '/gov/cctv-alerts', icon: Camera, label: 'CCTV Alerts' },
     { path: '/gov/disaster-alerts', icon: CloudLightning, label: 'Disasters' },
     { path: '/gov/response', icon: Users, label: 'Response' },
+    { path: '/gov/ngo-partners', icon: HeartHandshake, label: 'NGO Partners' },
+    { path: '/gov/ngo-requests', icon: FilePlus2, label: 'NGO Requests' },
   ];
   
   return (

@@ -1,6 +1,7 @@
 const express = require("express");
 const asyncHandler = require("../middleware/asyncHandler");
 const incidentController = require("../controllers/incidentController");
+const ngoController = require("../controllers/ngoController");
 
 const router = express.Router();
 
@@ -15,6 +16,21 @@ router.get("/incidents/stats/summary", asyncHandler(incidentController.getIncide
 router.get("/incidents/:incidentId", asyncHandler(incidentController.getIncidentById));
 
 router.patch("/incidents/:incidentId/respond", asyncHandler(incidentController.respondToIncident));
+router.patch(
+	"/incidents/:incidentId/auto-assign-ngo",
+	asyncHandler(incidentController.autoAssignNearestNgo)
+);
 router.patch("/incidents/:incidentId/resolve", asyncHandler(incidentController.resolveIncident));
+
+router.get("/ngos", asyncHandler(ngoController.getNgos));
+router.post("/ngo-requests", asyncHandler(ngoController.createNgoRequest));
+router.get("/ngo-requests", asyncHandler(ngoController.getNgoRequests));
+router.patch("/ngo-requests/:requestId/approve", asyncHandler(ngoController.approveNgoRequest));
+router.patch("/ngo-requests/:requestId/reject", asyncHandler(ngoController.rejectNgoRequest));
+router.post("/ngo-auth/login", asyncHandler(ngoController.ngoLogin));
+router.post("/ngo-auth/logout", asyncHandler(ngoController.ngoLogout));
+router.get("/ngo-auth/profile", asyncHandler(ngoController.getNgoProfile));
+router.patch("/ngo-auth/availability", asyncHandler(ngoController.setNgoAvailability));
+router.get("/ngo-auth/incidents", asyncHandler(ngoController.getNgoAssignedIncidents));
 
 module.exports = router;

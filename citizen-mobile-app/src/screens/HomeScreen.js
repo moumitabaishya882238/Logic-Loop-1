@@ -174,7 +174,13 @@ const HomeScreen = () => {
       setStatusText('SOS sent successfully. Tap again if needed.');
     } catch (error) {
       console.error('SOS flow failed:', error);
-      const message = error instanceof Error ? error.message : 'Failed to send SOS.';
+      let message = error instanceof Error ? error.message : 'Failed to send SOS.';
+
+      if (message.includes('Unable to reach backend') || message.includes('Network Error')) {
+        message =
+          'Could not connect to backend from phone. Keep backend running and run: adb reverse tcp:8001 tcp:8001';
+      }
+
       Alert.alert('SOS Failed', message);
       setStatusText('SOS failed. Please try again.');
     } finally {
