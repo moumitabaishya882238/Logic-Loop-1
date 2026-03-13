@@ -18,6 +18,7 @@ from datetime import datetime
 from typing import Optional
 
 import cv2
+import pandas
 import torch
 import uvicorn
 from fastapi import FastAPI, HTTPException
