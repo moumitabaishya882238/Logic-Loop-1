@@ -19,6 +19,7 @@ from typing import Optional
 
 import cv2
 import pandas
+import matplotlib.pyplot as plt
 import torch
 import uvicorn
 from fastapi import FastAPI, HTTPException
