@@ -12,7 +12,7 @@ app.use(
     origin: env.corsOrigins.includes("*") ? true : env.corsOrigins,
   })
 );
-app.use(express.json());
+app.use(express.json({ limit: "15mb" }));
 
 app.use("/api", incidentRoutes);
 app.use(notFoundHandler);

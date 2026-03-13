@@ -1,15 +1,62 @@
 import axios from 'axios';
 
-// Android emulator should use 10.0.2.2 to reach host machine.
-const BACKEND_URL = 'http://10.0.2.2:8001';
-const API_URL = `${BACKEND_URL}/api`;
+// Candidate backend URLs for common local development setups.
+const BACKEND_CANDIDATES = [
+  'http://localhost:8001',
+  'http://127.0.0.1:8001',
+  'http://10.0.2.2:8001',
+];
+
+let preferredBackend = null;
+
+const getOrderedBackends = () => {
+  if (!preferredBackend) {
+    return BACKEND_CANDIDATES;
+  }
+  return [preferredBackend, ...BACKEND_CANDIDATES.filter((url) => url !== preferredBackend)];
+};
+
+const isNetworkError = (error) => {
+  if (!error) {
+    return false;
+  }
+  return (
+    error.code === 'ERR_NETWORK' ||
+    error.message === 'Network Error' ||
+    (!error.response && !!error.request)
+  );
+};
+
+const requestWithFallback = async (requestFactory) => {
+  const errors = [];
+
+  for (const backendUrl of getOrderedBackends()) {
+    try {
+      const response = await requestFactory(`${backendUrl}/api`);
+      preferredBackend = backendUrl;
+      return response.data;
+    } catch (error) {
+      errors.push({ backendUrl, error });
+      if (!isNetworkError(error)) {
+        throw error;
+      }
+    }
+  }
+
+  const attemptedHosts = getOrderedBackends().join(', ');
+  console.error('API connection failed on all hosts:', attemptedHosts, errors);
+  throw new Error(
+    'Unable to reach backend. For physical Android via USB, run: adb reverse tcp:8001 tcp:8001, then retry.'
+  );
+};
 
 const api = {
   // Create SOS incident
   createSOSIncident: async (data) => {
     try {
-      const response = await axios.post(`${API_URL}/incidents/sos`, data);
-      return response.data;
+      return await requestWithFallback((apiBase) =>
+        axios.post(`${apiBase}/incidents/sos`, data, { timeout: 20000 })
+      );
     } catch (error) {
       console.error('API Error:', error);
       throw error;
@@ -19,8 +66,9 @@ const api = {
   // Get all incidents
   getIncidents: async (params = {}) => {
     try {
-      const response = await axios.get(`${API_URL}/incidents`, { params });
-      return response.data;
+      return await requestWithFallback((apiBase) =>
+        axios.get(`${apiBase}/incidents`, { params, timeout: 15000 })
+      );
     } catch (error) {
       console.error('API Error:', error);
       throw error;
@@ -30,8 +78,9 @@ const api = {
   // Get incident stats
   getIncidentStats: async () => {
     try {
-      const response = await axios.get(`${API_URL}/incidents/stats/summary`);
-      return response.data;
+      return await requestWithFallback((apiBase) =>
+        axios.get(`${apiBase}/incidents/stats/summary`, { timeout: 15000 })
+      );
     } catch (error) {
       console.error('API Error:', error);
       throw error;
