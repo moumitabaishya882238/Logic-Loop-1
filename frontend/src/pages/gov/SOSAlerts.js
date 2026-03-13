@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { GovLayout } from '@/components/GovLayout';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
-import { AlertTriangle, MapPin, Clock, User, CheckCircle } from 'lucide-react';
+import { AlertTriangle, MapPin, Clock, User, CheckCircle, Mic } from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -184,6 +184,21 @@ const SOSAlerts = () => {
                         </div>
                       </div>
                     </div>
+
+                    {incident.voiceNoteBase64 && (
+                      <div className="mt-4 bg-[#0F172A] border border-[#334155] rounded-lg p-3">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Mic className="w-4 h-4 text-[#38BDF8]" />
+                          <p className="text-[#CBD5E1] text-sm font-semibold">Voice Note</p>
+                          {incident.voiceDurationSeconds && (
+                            <span className="text-xs text-[#94A3B8]">({incident.voiceDurationSeconds}s)</span>
+                          )}
+                        </div>
+                        <audio controls preload="none" className="w-full" src={incident.voiceNoteBase64}>
+                          Your browser does not support audio playback.
+                        </audio>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex flex-col gap-2">

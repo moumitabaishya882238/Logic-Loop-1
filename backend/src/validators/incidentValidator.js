@@ -31,6 +31,16 @@ function validateCreatePayload(body) {
     return "description is required";
   }
 
+  if (body.voiceNoteBase64 != null) {
+    if (typeof body.voiceNoteBase64 !== "string") {
+      return "voiceNoteBase64 must be a string";
+    }
+
+    if (!body.voiceNoteBase64.startsWith("data:audio/")) {
+      return "voiceNoteBase64 must be a valid audio data URI";
+    }
+  }
+
   return null;
 }
 

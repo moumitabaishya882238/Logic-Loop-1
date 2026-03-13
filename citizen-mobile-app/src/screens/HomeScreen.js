@@ -1,72 +1,185 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Modal,
-  TextInput,
   Alert,
   ActivityIndicator,
   Linking,
+  PermissionsAndroid,
+  Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
+import RNFS from 'react-native-fs';
 import api from '../services/api';
 import { getCurrentLocation, requestLocationPermission } from '../utils/location';
 
 const HomeScreen = () => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    severity: 'MEDIUM',
-  });
+  const [sendingSos, setSendingSos] = useState(false);
+  const [countdown, setCountdown] = useState(0);
+  const [statusText, setStatusText] = useState('Tap SOS for immediate emergency assistance');
+  const audioRecorderPlayer = useMemo(() => new AudioRecorderPlayer(), []);
 
-  const handleSOSPress = () => {
-    setModalVisible(true);
+  useEffect(() => {
+    return () => {
+      audioRecorderPlayer.stopRecorder().catch(() => null);
+      audioRecorderPlayer.removeRecordBackListener();
+    };
+  }, [audioRecorderPlayer]);
+
+  const requestAudioPermission = async () => {
+    if (Platform.OS !== 'android') {
+      return true;
+    }
+
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        {
+          title: 'Microphone Permission',
+          message: 'SurakshaNet needs microphone access to send SOS voice notes',
+          buttonPositive: 'Allow',
+          buttonNegative: 'Deny',
+        }
+      );
+
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    } catch (error) {
+      console.warn('Audio permission error:', error);
+      return false;
+    }
   };
 
-  const handleSubmitSOS = async () => {
-    if (!formData.name.trim() || !formData.description.trim()) {
-      Alert.alert('Error', 'Please fill in all required fields');
+  const withTimeout = (promise, timeoutMs, timeoutMessage) => {
+    return Promise.race([
+      promise,
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error(timeoutMessage)), timeoutMs)
+      ),
+    ]);
+  };
+
+  const recordVoiceForSevenSeconds = async () => {
+    const fileName = `sos_${Date.now()}.m4a`;
+    const filePath = `${RNFS.CachesDirectoryPath}/${fileName}`;
+    let intervalId;
+
+    try {
+      await withTimeout(
+        audioRecorderPlayer.startRecorder(filePath),
+        8000,
+        'Microphone did not start. Please try again.'
+      );
+      setCountdown(7);
+      setStatusText('Recording voice note (7s)...');
+
+      intervalId = setInterval(() => {
+        setCountdown((previous) => (previous > 0 ? previous - 1 : 0));
+      }, 1000);
+
+      await new Promise((resolve) => setTimeout(resolve, 7000));
+
+      const recordedPath = await withTimeout(
+        audioRecorderPlayer.stopRecorder(),
+        5000,
+        'Unable to stop voice recording. Please retry.'
+      );
+      audioRecorderPlayer.removeRecordBackListener();
+
+      const normalizedPath = recordedPath.startsWith('file://')
+        ? recordedPath.replace('file://', '')
+        : recordedPath;
+
+      const voiceBase64 = await withTimeout(
+        RNFS.readFile(normalizedPath, 'base64'),
+        5000,
+        'Unable to read recorded voice note.'
+      );
+
+      return {
+        dataUri: `data:audio/mp4;base64,${voiceBase64}`,
+        durationSeconds: 7,
+      };
+    } finally {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    }
+  };
+
+  const handleSOSPress = async () => {
+    if (sendingSos) {
       return;
     }
 
-    setLoading(true);
+    setSendingSos(true);
+    setStatusText('Preparing SOS alert...');
 
     try {
-      const hasPermission = await requestLocationPermission();
-      if (!hasPermission) {
-        Alert.alert('Permission Denied', 'Location permission is required for emergency reporting');
-        setLoading(false);
-        return;
+      setStatusText('Requesting location permission...');
+      const hasLocationPermission = await withTimeout(
+        requestLocationPermission(),
+        10000,
+        'Location permission request timed out. Please tap SOS again.'
+      );
+
+      if (!hasLocationPermission) {
+        throw new Error('Location permission is required to send SOS.');
       }
 
-      const location = await getCurrentLocation();
+      setStatusText('Requesting microphone permission...');
+      const hasAudioPermission = await withTimeout(
+        requestAudioPermission(),
+        10000,
+        'Microphone permission request timed out. Please tap SOS again.'
+      );
 
+      if (!hasAudioPermission) {
+        throw new Error('Microphone permission is required to attach SOS voice note.');
+      }
+
+      setStatusText('Capturing exact location...');
+      const location = await withTimeout(
+        getCurrentLocation(),
+        15000,
+        'Could not fetch location quickly. Move to open sky and retry.'
+      );
+
+      const voice = await withTimeout(
+        recordVoiceForSevenSeconds(),
+        17000,
+        'Voice recording timed out. Please retry.'
+      );
+
+      setStatusText('Sending SOS to command center...');
       const incidentData = {
         type: 'SOS',
         location: {
-          lat: location.lat,
-          lng: location.lng,
-          address: `Lat: ${location.lat.toFixed(4)}, Lng: ${location.lng.toFixed(4)}`,
+          lat: Number(location.lat.toFixed(6)),
+          lng: Number(location.lng.toFixed(6)),
+          address: `Lat: ${location.lat.toFixed(6)}, Lng: ${location.lng.toFixed(6)}`,
         },
-        description: formData.description,
-        severity: formData.severity,
-        reportedBy: formData.name,
+        description: 'SOS voice emergency alert from citizen app',
+        severity: 'CRITICAL',
+        reportedBy: 'Citizen Mobile App',
+        voiceNoteBase64: voice.dataUri,
+        voiceDurationSeconds: voice.durationSeconds,
       };
 
       await api.createSOSIncident(incidentData);
-      Alert.alert('Success', 'SOS alert sent successfully! Help is on the way.');
-      setModalVisible(false);
-      setFormData({ name: '', description: '', severity: 'MEDIUM' });
+      Alert.alert('SOS Sent', 'Voice SOS and exact location sent. Help is on the way.');
+      setStatusText('SOS sent successfully. Tap again if needed.');
     } catch (error) {
-      console.error('Error sending SOS:', error);
-      Alert.alert('Error', 'Failed to send SOS alert. Please try again.');
+      console.error('SOS flow failed:', error);
+      const message = error instanceof Error ? error.message : 'Failed to send SOS.';
+      Alert.alert('SOS Failed', message);
+      setStatusText('SOS failed. Please try again.');
     } finally {
-      setLoading(false);
+      setCountdown(0);
+      setSendingSos(false);
     }
   };
 
@@ -83,7 +196,7 @@ const HomeScreen = () => {
       <View style={styles.heroSection}>
         <Icon name="shield-check" size={80} color="#DC2626" />
         <Text style={styles.heroTitle}>Your Safety Matters</Text>
-        <Text style={styles.heroSubtitle}>Press SOS for immediate emergency assistance</Text>
+        <Text style={styles.heroSubtitle}>One tap records 7s voice + sends exact location</Text>
       </View>
 
       {/* SOS Button */}
@@ -91,12 +204,28 @@ const HomeScreen = () => {
         <TouchableOpacity
           style={styles.sosButton}
           onPress={handleSOSPress}
+          disabled={sendingSos}
           activeOpacity={0.8}
         >
-          <Icon name="alert" size={80} color="#FFFFFF" />
-          <Text style={styles.sosText}>SOS</Text>
-          <Text style={styles.sosSubtext}>Emergency</Text>
+          {sendingSos ? (
+            <>
+              <ActivityIndicator color="#FFFFFF" size="large" />
+              <Text style={styles.sosSubtext}>Processing...</Text>
+              {countdown > 0 ? <Text style={styles.countdownText}>{countdown}s</Text> : null}
+            </>
+          ) : (
+            <>
+              <Icon name="alert" size={80} color="#FFFFFF" />
+              <Text style={styles.sosText}>SOS</Text>
+              <Text style={styles.sosSubtext}>Tap to Send</Text>
+            </>
+          )}
         </TouchableOpacity>
+      </View>
+
+      <View style={styles.statusCard}>
+        <Text style={styles.statusLabel}>SOS Status</Text>
+        <Text style={styles.statusValue}>{statusText}</Text>
       </View>
 
       {/* Emergency Contacts */}
@@ -138,92 +267,6 @@ const HomeScreen = () => {
         </View>
       </View>
 
-      {/* SOS Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Icon name="alert" size={32} color="#DC2626" />
-              <Text style={styles.modalTitle}>Emergency SOS Alert</Text>
-              <TouchableOpacity
-                style={styles.closeButton}
-                onPress={() => setModalVisible(false)}
-              >
-                <Icon name="close" size={24} color="#64748B" />
-              </TouchableOpacity>
-            </View>
-
-            <ScrollView style={styles.modalForm}>
-              <Text style={styles.label}>Your Name *</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your name"
-                value={formData.name}
-                onChangeText={(text) => setFormData({ ...formData, name: text })}
-              />
-
-              <Text style={styles.label}>Emergency Description *</Text>
-              <TextInput
-                style={[styles.input, styles.textArea]}
-                placeholder="Describe the emergency..."
-                value={formData.description}
-                onChangeText={(text) => setFormData({ ...formData, description: text })}
-                multiline
-                numberOfLines={4}
-              />
-
-              <Text style={styles.label}>Severity</Text>
-              <View style={styles.severityContainer}>
-                {['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'].map((severity) => (
-                  <TouchableOpacity
-                    key={severity}
-                    style={[
-                      styles.severityButton,
-                      formData.severity === severity && styles.severityButtonActive,
-                    ]}
-                    onPress={() => setFormData({ ...formData, severity })}
-                  >
-                    <Text
-                      style={[
-                        styles.severityText,
-                        formData.severity === severity && styles.severityTextActive,
-                      ]}
-                    >
-                      {severity}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-
-              <View style={styles.modalActions}>
-                <TouchableOpacity
-                  style={[styles.button, styles.buttonSecondary]}
-                  onPress={() => setModalVisible(false)}
-                  disabled={loading}
-                >
-                  <Text style={styles.buttonTextSecondary}>Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.button, styles.buttonPrimary]}
-                  onPress={handleSubmitSOS}
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <ActivityIndicator color="#FFFFFF" />
-                  ) : (
-                    <Text style={styles.buttonTextPrimary}>Send SOS</Text>
-                  )}
-                </TouchableOpacity>
-              </View>
-            </ScrollView>
-          </View>
-        </View>
-      </Modal>
     </ScrollView>
   );
 };
@@ -278,6 +321,33 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     marginTop: 4,
   },
+  countdownText: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    marginTop: 6,
+  },
+  statusCard: {
+    backgroundColor: '#EFF6FF',
+    marginHorizontal: 16,
+    marginBottom: 12,
+    padding: 14,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#DBEAFE',
+  },
+  statusLabel: {
+    fontSize: 12,
+    color: '#475569',
+    textTransform: 'uppercase',
+    fontWeight: '700',
+  },
+  statusValue: {
+    fontSize: 14,
+    color: '#1E293B',
+    marginTop: 6,
+    fontWeight: '600',
+  },
   card: {
     backgroundColor: '#F1F5F9',
     margin: 16,
@@ -324,114 +394,13 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   infoCard: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-  },
-  infoIconContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: '#F1F5F9',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
-  },
-  infoTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#0F172A',
-    marginBottom: 4,
-  },
-  infoSubtitle: {
-    fontSize: 12,
-    color: '#64748B',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingTop: 20,
-    maxHeight: '90%',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
-  },
-  modalTitle: {
-    flex: 1,
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#0F172A',
-    marginLeft: 12,
-  },
-  closeButton: {
-    padding: 4,
-  },
-  modalForm: {
-    padding: 20,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#0F172A',
-    marginBottom: 8,
-    marginTop: 12,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    color: '#0F172A',
-  },
-  textArea: {
-    height: 100,
-    textAlignVertical: 'top',
-  },
-  severityContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  severityButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    backgroundColor: '#FFFFFF',
-  },
-  severityButtonActive: {
-    backgroundColor: '#DC2626',
-    borderColor: '#DC2626',
-  },
-  severityText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#64748B',
-  },
-  severityTextActive: {
-    color: '#FFFFFF',
-  },
-  modalActions: {
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 24,
+    button: {
+      flex: 1,
+      paddingVertical: 14,
+      borderRadius: 8,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
   },
   button: {
     flex: 1,
