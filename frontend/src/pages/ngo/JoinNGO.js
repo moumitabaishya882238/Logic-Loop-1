@@ -112,35 +112,18 @@ const JoinNGO = () => {
 
   return (
     <div className="min-h-screen bg-[#0B1220] text-white">
-      <div className="max-w-3xl mx-auto px-6 py-12">
+      <div className="max-w-7xl mx-auto px-6 py-12">
         <h1 className="text-3xl font-bold">Join SurakshaNet as NGO Partner</h1>
         <p className="text-[#94A3B8] mt-2">
           Submit your organization details to get onboarded for emergency response assignments.
         </p>
 
-        <div className="mt-6 bg-[#111B2F] border border-[#334155] rounded-xl p-4">
-          <p className="text-sm text-[#94A3B8] uppercase">Onboarding Journey</p>
-          <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div className="bg-[#0F172A] border border-[#334155] rounded-md p-3">
-              <p className="text-xs text-[#38BDF8] font-semibold">STEP 1</p>
-              <p className="text-sm mt-1 font-medium">Apply</p>
-              <p className="text-xs text-[#94A3B8] mt-1">Submit NGO profile and team details</p>
-            </div>
-            <div className="bg-[#0F172A] border border-[#334155] rounded-md p-3">
-              <p className="text-xs text-[#38BDF8] font-semibold">STEP 2</p>
-              <p className="text-sm mt-1 font-medium">Government Review</p>
-              <p className="text-xs text-[#94A3B8] mt-1">Request is approved in NGO Requests panel</p>
-            </div>
-            <div className="bg-[#0F172A] border border-[#334155] rounded-md p-3">
-              <p className="text-xs text-[#38BDF8] font-semibold">STEP 3</p>
-              <p className="text-sm mt-1 font-medium">Login and Go Online</p>
-              <p className="text-xs text-[#94A3B8] mt-1">Use NGO portal, set ONLINE, receive assignments</p>
-            </div>
-          </div>
-        </div>
-
-        <form onSubmit={onSubmit} className="mt-8 bg-[#1E293B] border border-[#334155] rounded-xl p-6 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="mt-8 grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
+          <form
+            onSubmit={onSubmit}
+            className="xl:col-span-2 bg-[#1E293B] border border-[#334155] rounded-xl p-6 space-y-4"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <label className="space-y-1">
               <span className="text-sm text-[#CBD5E1]">Organization Name</span>
               <input
@@ -287,16 +270,38 @@ const JoinNGO = () => {
                 className="w-full bg-[#0F172A] border border-[#334155] rounded-md px-3 py-2"
               />
             </label>
-          </div>
+            </div>
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full bg-[#059669] hover:bg-[#047857] disabled:opacity-60 rounded-md py-3 font-semibold"
-          >
-            {submitting ? 'Submitting Request...' : 'Submit NGO Request'}
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full bg-[#059669] hover:bg-[#047857] disabled:opacity-60 rounded-md py-3 font-semibold"
+            >
+              {submitting ? 'Submitting Request...' : 'Submit NGO Request'}
+            </button>
+          </form>
+
+          <div className="xl:col-span-1 bg-[#111B2F] border border-[#334155] rounded-xl p-4 xl:sticky xl:top-6">
+            <p className="text-sm text-[#94A3B8] uppercase">Onboarding Journey</p>
+            <div className="mt-3 space-y-3">
+              <div className="bg-[#0F172A] border border-[#334155] rounded-md p-3">
+                <p className="text-xs text-[#38BDF8] font-semibold">STEP 1</p>
+                <p className="text-sm mt-1 font-medium">Apply</p>
+                <p className="text-xs text-[#94A3B8] mt-1">Submit NGO profile and team details</p>
+              </div>
+              <div className="bg-[#0F172A] border border-[#334155] rounded-md p-3">
+                <p className="text-xs text-[#38BDF8] font-semibold">STEP 2</p>
+                <p className="text-sm mt-1 font-medium">Government Review</p>
+                <p className="text-xs text-[#94A3B8] mt-1">Request is approved in NGO Requests panel</p>
+              </div>
+              <div className="bg-[#0F172A] border border-[#334155] rounded-md p-3">
+                <p className="text-xs text-[#38BDF8] font-semibold">STEP 3</p>
+                <p className="text-sm mt-1 font-medium">Login and Go Online</p>
+                <p className="text-xs text-[#94A3B8] mt-1">Use NGO portal, set ONLINE, receive assignments</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

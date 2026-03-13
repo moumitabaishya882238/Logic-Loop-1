@@ -13,6 +13,12 @@ router.post("/incidents/disaster", asyncHandler(incidentController.createDisaste
 
 router.get("/incidents", asyncHandler(incidentController.getIncidents));
 router.get("/incidents/stats/summary", asyncHandler(incidentController.getIncidentStats));
+router.get("/flood-sensors", asyncHandler(incidentController.getFloodSensorFeed));
+router.post("/flood-sensors", asyncHandler(incidentController.createFloodSensor));
+router.post(
+	"/flood-sensors/create-disaster-alerts",
+	asyncHandler(incidentController.createFloodAlertsFromSensors)
+);
 router.get("/incidents/:incidentId", asyncHandler(incidentController.getIncidentById));
 
 router.patch("/incidents/:incidentId/respond", asyncHandler(incidentController.respondToIncident));

@@ -6,6 +6,7 @@ let incidentsCollection;
 let ngosCollection;
 let ngoRequestsCollection;
 let ngoSessionsCollection;
+let floodSensorsCollection;
 
 async function connectToDatabase() {
   mongoClient = new MongoClient(env.mongoUrl);
@@ -16,6 +17,7 @@ async function connectToDatabase() {
   ngosCollection = db.collection("ngos");
   ngoRequestsCollection = db.collection("ngo_requests");
   ngoSessionsCollection = db.collection("ngo_sessions");
+  floodSensorsCollection = db.collection("flood_sensors");
 
   await incidentsCollection.createIndex({ id: 1 }, { unique: true });
   await incidentsCollection.createIndex({ timestamp: -1 });
@@ -25,6 +27,8 @@ async function connectToDatabase() {
   await ngoRequestsCollection.createIndex({ status: 1, createdAt: -1 });
   await ngoSessionsCollection.createIndex({ token: 1 }, { unique: true });
   await ngoSessionsCollection.createIndex({ ngoId: 1, createdAt: -1 });
+  await floodSensorsCollection.createIndex({ sensorId: 1 }, { unique: true });
+  await floodSensorsCollection.createIndex({ status: 1, createdAt: -1 });
 
   return {
     db,
@@ -32,6 +36,7 @@ async function connectToDatabase() {
     ngosCollection,
     ngoRequestsCollection,
     ngoSessionsCollection,
+    floodSensorsCollection,
   };
 }
 
@@ -67,6 +72,14 @@ function getNgoSessionsCollection() {
   return ngoSessionsCollection;
 }
 
+function getFloodSensorsCollection() {
+  if (!floodSensorsCollection) {
+    throw new Error("Database is not connected. Call connectToDatabase first.");
+  }
+
+  return floodSensorsCollection;
+}
+
 async function closeDatabase() {
   if (mongoClient) {
     await mongoClient.close();
@@ -79,5 +92,6 @@ module.exports = {
   getNgosCollection,
   getNgoRequestsCollection,
   getNgoSessionsCollection,
+  getFloodSensorsCollection,
   closeDatabase,
 };

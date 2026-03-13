@@ -51,6 +51,21 @@ export const api = {
     return response.data;
   },
 
+  getFloodSensors: async () => {
+    const response = await axios.get(`${API}/flood-sensors`);
+    return response.data;
+  },
+
+  createFloodSensor: async (data) => {
+    const response = await axios.post(`${API}/flood-sensors`, data);
+    return response.data;
+  },
+
+  createDisasterAlertsFromSensors: async () => {
+    const response = await axios.post(`${API}/flood-sensors/create-disaster-alerts`);
+    return response.data;
+  },
+
   // NGOs
   getNGOPartners: async () => {
     const response = await axios.get(`${API}/ngos`);
