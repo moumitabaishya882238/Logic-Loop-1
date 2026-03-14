@@ -10,10 +10,10 @@
     "predev:web": "kill-port 3000",
     "predev:cctv": "kill-port 8002",
     "dev": "concurrently -k -n BACKEND,WEB -c cyan,magenta \"npm --prefix backend run dev\" \"npm --prefix frontend start\"",
-    "dev:all": "concurrently -k -n BACKEND,WEB,CCTV -c cyan,magenta,green \"npm --prefix backend run dev\" \"npm --prefix frontend start\" \"backend\\.venv\\Scripts\\python.exe -m uvicorn cctv_service:app --host 0.0.0.0 --port 8002 --reload --app-dir backend\"",
+    "dev:all": "concurrently -k -n BACKEND,WEB,CCTV -c cyan,magenta,green \"npm --prefix backend run dev\" \"npm --prefix frontend start\" \"C:\\\\Users\\\\Asus\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python310\\\\python.exe -m uvicorn main:app --host 0.0.0.0 --port 8002 --reload --app-dir ai-engine\"",
     "dev:backend": "npm --prefix backend run dev",
     "dev:web": "npm --prefix frontend start",
-    "dev:cctv": "backend\\.venv\\Scripts\\python.exe -m uvicorn cctv_service:app --host 0.0.0.0 --port 8002 --reload --app-dir backend"
+    "dev:cctv": "C:\\\\Users\\\\Asus\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python310\\\\python.exe -m uvicorn main:app --host 0.0.0.0 --port 8002 --reload --app-dir ai-engine"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",

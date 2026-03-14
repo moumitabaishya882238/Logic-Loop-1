@@ -146,6 +146,11 @@ export const api = {
     });
     return response.data;
   },
+
+  processAIFrame: async (payload) => {
+    const response = await axios.post(`${API}/ai/process-frame`, payload);
+    return response.data;
+  },
 };
 
 export default api;
