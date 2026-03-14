@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GovLayout } from '@/components/GovLayout';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
-import { Users, Activity, Clock, MapPin, CheckCircle, RadioTower } from 'lucide-react';
+import { Users, Activity, Clock, MapPin, CheckCircle, RadioTower, Navigation } from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 
 const ResponsePanel = () => {
+  const navigate = useNavigate();
   const [incidents, setIncidents] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -172,7 +174,16 @@ const ResponsePanel = () => {
                       </div>
                     </div>
 
-                    <div className="mt-4 pt-4 border-t border-[#334155] flex justify-end">
+                    <div className="mt-4 pt-4 border-t border-[#334155] flex justify-end gap-3">
+                      {incident.responderType === 'DRONE' && (
+                        <Button
+                          onClick={() => navigate(`/gov/drone-simulation/${incident.id}`)}
+                          className="bg-[#38BDF8] hover:bg-[#0284C7] text-white flex items-center gap-2"
+                        >
+                          <Navigation className="w-4 h-4" />
+                          View Telemetry
+                        </Button>
+                      )}
                       <Button
                         onClick={() => handleResolve(incident.id)}
                         className="bg-[#059669] hover:bg-[#047857] text-white flex items-center gap-2"

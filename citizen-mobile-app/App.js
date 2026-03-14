@@ -17,20 +17,20 @@ function TabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: '#DC2626',
-        tabBarInactiveTintColor: '#64748B',
+        tabBarActiveTintColor: '#059669', // Emerald/Gov theme active green
+        tabBarInactiveTintColor: '#94A3B8', // Slate-400 inactive
         tabBarStyle: {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#1E293B', // Slate-800 for tab bar background
           borderTopWidth: 1,
-          borderTopColor: '#E2E8F0',
+          borderTopColor: '#334155', // Slate-700
           height: 60,
           paddingBottom: 8,
           paddingTop: 8,
         },
         headerStyle: {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#0F172A', // Slate-900 (Main Base Color)
         },
-        headerTintColor: '#0F172A',
+        headerTintColor: '#F1F5F9', // Slate-100 (Text color)
         headerTitleStyle: {
           fontWeight: '600',
         },

@@ -66,6 +66,15 @@ export const api = {
     return response.data;
   },
 
+  analyzeCCTVFootage: async (formData, onUploadProgress) => {
+    const response = await axios.post(`${API}/cctv/analyze`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+      timeout: 180000,
+      ...(onUploadProgress && { onUploadProgress }),
+    });
+    return response.data;
+  },
+
   // NGOs
   getNGOPartners: async () => {
     const response = await axios.get(`${API}/ngos`);

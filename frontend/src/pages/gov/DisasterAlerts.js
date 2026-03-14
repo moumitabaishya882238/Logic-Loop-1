@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GovLayout } from '@/components/GovLayout';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
@@ -44,6 +45,7 @@ const SensorLocationPicker = ({ lat, lng, onPick }) => {
 };
 
 const DisasterAlerts = () => {
+  const navigate = useNavigate();
   const [incidents, setIncidents] = useState([]);
   const [sensorFeed, setSensorFeed] = useState({ sensors: [], summary: null });
   const [ngoPartners, setNgoPartners] = useState([]);
@@ -162,6 +164,13 @@ const DisasterAlerts = () => {
       }
 
       await api.respondToIncident(incidentId, payload);
+
+      if (responderType === 'DRONE') {
+        toast.success('Disaster Drone Medkit deployed! Opening telemetry map...');
+        navigate(`/gov/drone-simulation/${incidentId}`);
+        return;
+      }
+
       toast.success('Response team assigned successfully');
       fetchIncidents();
     } catch (error) {
@@ -250,6 +259,13 @@ const DisasterAlerts = () => {
       }
 
       await api.respondToIncident(targetIncident.id, payload);
+
+      if (responderType === 'DRONE') {
+        toast.success(`MedKit Drone deployed to ${selectedSensor.sensorName}! Opening telemetry...`);
+        navigate(`/gov/drone-simulation/${targetIncident.id}`);
+        return;
+      }
+
       toast.success(`Help dispatched to ${selectedSensor.sensorName}`);
       fetchIncidents();
     } catch (error) {

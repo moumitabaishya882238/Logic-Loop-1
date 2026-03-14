@@ -180,32 +180,34 @@ const NearbyAlertsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#0F172A', // Slate-900 Main background
   },
   centerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#0F172A', // Slate-900 Main background
   },
   loadingText: {
     marginTop: 12,
     fontSize: 16,
-    color: '#64748B',
+    color: '#94A3B8', // Slate-400
   },
   header: {
     padding: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#1E293B', // Slate-800 Header Area
     borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
+    borderBottomColor: '#334155', // Slate-700
   },
   statsCard: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#0F172A', // Slate-900 inner card
     borderRadius: 12,
     padding: 16,
+    borderWidth: 1,
+    borderColor: '#334155', // Slate-700
   },
   statsLeft: {
     flex: 1,
@@ -213,13 +215,13 @@ const styles = StyleSheet.create({
   statsLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#0F172A',
+    color: '#F1F5F9', // Slate-100 Text
     marginBottom: 4,
   },
   statsValue: {
     fontSize: 32,
     fontWeight: '700',
-    color: '#DC2626',
+    color: '#DC2626', // Red-600 active count
   },
   statsIcon: {
     width: 64,
@@ -234,14 +236,14 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   incidentCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#1E293B', // Slate-800 Card
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#334155', // Slate-700 Border
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 2,
   },
@@ -268,7 +270,7 @@ const styles = StyleSheet.create({
   incidentType: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#64748B',
+    color: '#94A3B8', // Slate-400
     textTransform: 'uppercase',
   },
   severityBadge: {
@@ -284,7 +286,7 @@ const styles = StyleSheet.create({
   incidentDescription: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#0F172A',
+    color: '#F1F5F9', // Slate-100 Text
     marginBottom: 12,
   },
   incidentDetails: {
@@ -298,15 +300,15 @@ const styles = StyleSheet.create({
   detailText: {
     flex: 1,
     fontSize: 14,
-    color: '#64748B',
+    color: '#94A3B8', // Slate-400
   },
   statusBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: '#D1FAE5',
+    backgroundColor: '#064E3B', // Emerald-900 Dark Banner
     borderWidth: 1,
-    borderColor: '#A7F3D0',
+    borderColor: '#065F46', // Emerald-800
     borderRadius: 6,
     paddingHorizontal: 12,
     paddingVertical: 8,
@@ -315,7 +317,7 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#059669',
+    color: '#34D399', // Emerald-400
   },
   emptyContainer: {
     flex: 1,
@@ -326,12 +328,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#64748B',
+    color: '#94A3B8', // Slate-400
     marginTop: 16,
   },
   emptyText: {
     fontSize: 14,
-    color: '#94A3B8',
+    color: '#64748B', // Slate-500
     marginTop: 8,
   },
 });

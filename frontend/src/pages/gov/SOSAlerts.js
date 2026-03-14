@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GovLayout } from '@/components/GovLayout';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
@@ -8,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 const SOSAlerts = () => {
+  const navigate = useNavigate();
   const [incidents, setIncidents] = useState([]);
   const [ngoPartners, setNgoPartners] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -69,14 +71,21 @@ const SOSAlerts = () => {
       }
 
       if (responderType === 'NGO') {
+        payload.responderName = payload.responderName; // keep as assigned
         payload.ngoPartner = ngoPartner;
       }
 
       await api.respondToIncident(incidentId, {
         ...payload,
       });
-      const successLabel = responderType === 'DRONE' ? 'Drone dispatched' : 'Response team assigned';
-      toast.success(`${successLabel} successfully`);
+
+      if (responderType === 'DRONE') {
+        toast.success('Drone dispatched successfully! Opening telemetry map...');
+        navigate(`/gov/drone-simulation/${incidentId}`);
+        return;
+      }
+
+      toast.success('Response team assigned successfully');
       fetchIncidents();
     } catch (error) {
       console.error('Error responding to incident:', error);

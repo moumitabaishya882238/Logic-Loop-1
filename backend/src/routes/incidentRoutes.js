@@ -1,15 +1,35 @@
 const express = require("express");
+const multer = require("multer");
 const asyncHandler = require("../middleware/asyncHandler");
 const incidentController = require("../controllers/incidentController");
 const ngoController = require("../controllers/ngoController");
+const cctvController = require("../controllers/cctvController");
 
 const router = express.Router();
+
+const videoUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 500 * 1024 * 1024 }, // 500 MB
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype.startsWith("video/") || file.mimetype === "application/octet-stream") {
+      cb(null, true);
+    } else {
+      cb(new Error("Only video files are accepted"));
+    }
+  },
+});
 
 router.get("/", asyncHandler(incidentController.root));
 
 router.post("/incidents/sos", asyncHandler(incidentController.createSosIncident));
 router.post("/incidents/cctv", asyncHandler(incidentController.createCctvIncident));
 router.post("/incidents/disaster", asyncHandler(incidentController.createDisasterIncident));
+
+router.post(
+  "/cctv/analyze",
+  videoUpload.single("video"),
+  asyncHandler(cctvController.analyzeCCTVFootage)
+);
 
 router.get("/incidents", asyncHandler(incidentController.getIncidents));
 router.get("/incidents/stats/summary", asyncHandler(incidentController.getIncidentStats));

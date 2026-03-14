@@ -8,7 +8,10 @@
   font-family: 'Public Sans', sans-serif;
 }
 
-.gov-theme h1, .gov-theme h2, .gov-theme h3, .gov-theme h4 {
+.gov-theme h1,
+.gov-theme h2,
+.gov-theme h3,
+.gov-theme h4 {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
   text-transform: uppercase;
@@ -27,17 +30,22 @@
   font-family: 'Public Sans', sans-serif;
 }
 
-.citizen-theme h1, .citizen-theme h2, .citizen-theme h3 {
+.citizen-theme h1,
+.citizen-theme h2,
+.citizen-theme h3 {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 600;
 }
 
 /* SOS Pulse Animation */
 @keyframes sos-pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
     box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
   }
+
   50% {
     transform: scale(1.05);
     box-shadow: 0 0 0 30px rgba(220, 38, 38, 0);
@@ -50,8 +58,17 @@
 
 /* Alert Blink */
 @keyframes blink {
-  0%, 50%, 100% { opacity: 1; }
-  25%, 75% { opacity: 0.3; }
+
+  0%,
+  50%,
+  100% {
+    opacity: 1;
+  }
+
+  25%,
+  75% {
+    opacity: 0.3;
+  }
 }
 
 .blink-alert {

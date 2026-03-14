@@ -11,6 +11,7 @@ import DisasterAlerts from "@/pages/gov/DisasterAlerts";
 import ResponsePanel from "@/pages/gov/ResponsePanel";
 import NGOPartners from "@/pages/gov/NGOPartners";
 import NGORequests from "@/pages/gov/NGORequests";
+import DroneSimulation from "@/pages/gov/DroneSimulation";
 import JoinNGO from "@/pages/ngo/JoinNGO";
 import NGOLogin from "@/pages/ngo/NGOLogin";
 import NGODashboard from "@/pages/ngo/NGODashboard";
@@ -36,6 +37,7 @@ function App() {
           <Route path="/gov/response" element={<ResponsePanel />} />
           <Route path="/gov/ngo-partners" element={<NGOPartners />} />
           <Route path="/gov/ngo-requests" element={<NGORequests />} />
+          <Route path="/gov/drone-simulation/:incidentId" element={<DroneSimulation />} />
 
           {/* NGO onboarding route */}
           <Route path="/ngo/join" element={<JoinNGO />} />
