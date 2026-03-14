@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GovLayout } from '@/components/GovLayout';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
-import { CloudLightning, MapPin, Clock, CheckCircle, Waves, Gauge, TriangleAlert } from 'lucide-react';
+import { CloudLightning, MapPin, Clock, CheckCircle, Waves, Gauge, TriangleAlert, Cpu, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -44,6 +45,7 @@ const SensorLocationPicker = ({ lat, lng, onPick }) => {
 };
 
 const DisasterAlerts = () => {
+  const navigate = useNavigate();
   const [incidents, setIncidents] = useState([]);
   const [sensorFeed, setSensorFeed] = useState({ sensors: [], summary: null });
   const [ngoPartners, setNgoPartners] = useState([]);
@@ -54,6 +56,7 @@ const DisasterAlerts = () => {
   const [ngoPartner, setNgoPartner] = useState('');
   const [selectedSensorId, setSelectedSensorId] = useState(null);
   const [showAddSensorForm, setShowAddSensorForm] = useState(false);
+  const [showSensorDesign, setShowSensorDesign] = useState(false);
   const [addingSensor, setAddingSensor] = useState(false);
   const [locating, setLocating] = useState(false);
   const [sensorForm, setSensorForm] = useState({
@@ -161,6 +164,13 @@ const DisasterAlerts = () => {
       }
 
       await api.respondToIncident(incidentId, payload);
+
+      if (responderType === 'DRONE') {
+        toast.success('Disaster Drone Medkit deployed! Opening telemetry map...');
+        navigate(`/gov/drone-simulation/${incidentId}`);
+        return;
+      }
+
       toast.success('Response team assigned successfully');
       fetchIncidents();
     } catch (error) {
@@ -249,6 +259,13 @@ const DisasterAlerts = () => {
       }
 
       await api.respondToIncident(targetIncident.id, payload);
+
+      if (responderType === 'DRONE') {
+        toast.success(`MedKit Drone deployed to ${selectedSensor.sensorName}! Opening telemetry...`);
+        navigate(`/gov/drone-simulation/${targetIncident.id}`);
+        return;
+      }
+
       toast.success(`Help dispatched to ${selectedSensor.sensorName}`);
       fetchIncidents();
     } catch (error) {
@@ -457,6 +474,13 @@ const DisasterAlerts = () => {
               </p>
             </div>
             <div className="flex items-center gap-2">
+              <Button
+                onClick={() => setShowSensorDesign(true)}
+                className="bg-[#1D4ED8] hover:bg-[#1E40AF] text-white flex items-center gap-2"
+              >
+                <Cpu className="w-4 h-4" />
+                Sensor Design
+              </Button>
               <Button
                 onClick={() => setShowAddSensorForm((previous) => !previous)}
                 className="bg-[#334155] hover:bg-[#475569] text-white"
@@ -821,6 +845,278 @@ const DisasterAlerts = () => {
           )}
         </div>
       </div>
+
+      {/* Sensor Design Modal */}
+      {showSensorDesign && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+          onClick={() => setShowSensorDesign(false)}
+        >
+          <div
+            className="relative bg-[#0F172A] border border-[#334155] rounded-2xl shadow-2xl w-full max-w-3xl mx-4 overflow-y-auto max-h-[92vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#334155]">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-[#1D4ED8]/20 flex items-center justify-center">
+                  <Cpu className="w-5 h-5 text-[#60A5FA]" />
+                </div>
+                <div>
+                  <h2 className="text-white font-bold text-lg">Flood Sensor — Hardware Design</h2>
+                  <p className="text-[#94A3B8] text-xs">SurakshaNet Drain Water-Level Monitoring Unit v1.0</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowSensorDesign(false)}
+                className="text-[#64748B] hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* SVG Diagram */}
+              <div className="bg-[#1E293B] rounded-xl p-4 border border-[#334155]">
+                <svg viewBox="0 0 700 420" className="w-full" xmlns="http://www.w3.org/2000/svg">
+
+                  {/* ── Mounting Pole ── */}
+                  <rect x="338" y="20" width="24" height="320" rx="4" fill="#475569" />
+                  <rect x="340" y="22" width="20" height="316" rx="3" fill="#334155" />
+                  {/* pole bolts */}
+                  <circle cx="350" cy="60" r="4" fill="#94A3B8" />
+                  <circle cx="350" cy="130" r="4" fill="#94A3B8" />
+                  <circle cx="350" cy="200" r="4" fill="#94A3B8" />
+                  <circle cx="350" cy="270" r="4" fill="#94A3B8" />
+
+                  {/* ── Solar Panel (top) ── */}
+                  <rect x="295" y="14" width="110" height="30" rx="5" fill="#1D4ED8" stroke="#60A5FA" strokeWidth="1.5" />
+                  <rect x="298" y="16" width="50" height="26" rx="2" fill="#1E40AF" />
+                  <rect x="352" y="16" width="50" height="26" rx="2" fill="#1E40AF" />
+                  <line x1="298" y1="29" x2="348" y2="29" stroke="#60A5FA" strokeWidth="0.7" />
+                  <line x1="323" y1="16" x2="323" y2="42" stroke="#60A5FA" strokeWidth="0.7" />
+                  <line x1="352" y1="29" x2="402" y2="29" stroke="#60A5FA" strokeWidth="0.7" />
+                  <line x1="377" y1="16" x2="377" y2="42" stroke="#60A5FA" strokeWidth="0.7" />
+                  {/* label */}
+                  <line x1="405" y1="29" x2="450" y2="20" stroke="#60A5FA" strokeWidth="1" strokeDasharray="3,2" />
+                  <text x="453" y="20" fill="#60A5FA" fontSize="11" fontFamily="monospace">Solar Panel</text>
+                  <text x="453" y="33" fill="#94A3B8" fontSize="9" fontFamily="monospace">5V / 1W charging</text>
+
+                  {/* ── Housing Box (main enclosure) ── */}
+                  <rect x="290" y="60" width="120" height="140" rx="8" fill="#1E293B" stroke="#0EA5E9" strokeWidth="2" />
+                  <rect x="294" y="64" width="112" height="132" rx="6" fill="#0F172A" />
+                  {/* screws */}
+                  <circle cx="298" cy="68" r="3" fill="#334155" stroke="#475569" strokeWidth="1" />
+                  <circle cx="402" cy="68" r="3" fill="#334155" stroke="#475569" strokeWidth="1" />
+                  <circle cx="298" cy="192" r="3" fill="#334155" stroke="#475569" strokeWidth="1" />
+                  <circle cx="402" cy="192" r="3" fill="#334155" stroke="#475569" strokeWidth="1" />
+                  {/* housing label */}
+                  <line x1="410" y1="100" x2="450" y2="90" stroke="#0EA5E9" strokeWidth="1" strokeDasharray="3,2" />
+                  <text x="453" y="90" fill="#0EA5E9" fontSize="11" fontFamily="monospace">Weatherproof Housing</text>
+                  <text x="453" y="103" fill="#94A3B8" fontSize="9" fontFamily="monospace">IP68-rated ABS shell</text>
+
+                  {/* ── ESP32 PCB ── */}
+                  <rect x="308" y="80" width="84" height="50" rx="4" fill="#064E3B" stroke="#10B981" strokeWidth="1.5" />
+                  <rect x="312" y="84" width="76" height="42" rx="3" fill="#065F46" />
+                  {/* chip */}
+                  <rect x="332" y="90" width="36" height="24" rx="2" fill="#022C22" stroke="#34D399" strokeWidth="1" />
+                  <text x="340" y="106" fill="#34D399" fontSize="8" fontFamily="monospace" fontWeight="bold">ESP32</text>
+                  {/* GPIO pins */}
+                  {[0,1,2,3,4,5].map((i) => (
+                    <rect key={i} x={312} y={87 + i * 6} width="4" height="3" rx="1" fill="#34D399" />
+                  ))}
+                  {[0,1,2,3,4,5].map((i) => (
+                    <rect key={i} x={384} y={87 + i * 6} width="4" height="3" rx="1" fill="#34D399" />
+                  ))}
+                  {/* ESP label */}
+                  <line x1="290" y1="105" x2="245" y2="88" stroke="#10B981" strokeWidth="1" strokeDasharray="3,2" />
+                  <text x="130" y="88" fill="#10B981" fontSize="11" fontFamily="monospace">ESP32-WROOM-32</text>
+                  <text x="130" y="101" fill="#94A3B8" fontSize="9" fontFamily="monospace">Wi-Fi + BLE SoC</text>
+
+                  {/* ── Battery ── */}
+                  <rect x="308" y="142" width="40" height="22" rx="3" fill="#78350F" stroke="#F59E0B" strokeWidth="1.5" />
+                  <rect x="346" y="148" width="5" height="10" rx="1" fill="#F59E0B" />
+                  <text x="313" y="157" fill="#FDE68A" fontSize="7" fontFamily="monospace">18650</text>
+                  {/* battery label */}
+                  <line x1="290" y1="153" x2="245" y2="153" stroke="#F59E0B" strokeWidth="1" strokeDasharray="3,2" />
+                  <text x="130" y="153" fill="#F59E0B" fontSize="11" fontFamily="monospace">Li-Ion Battery</text>
+                  <text x="130" y="166" fill="#94A3B8" fontSize="9" fontFamily="monospace">3.7V 3000mAh</text>
+
+                  {/* ── WiFi Antenna ── */}
+                  <rect x="360" y="142" width="26" height="22" rx="2" fill="#1E293B" stroke="#A78BFA" strokeWidth="1.5" />
+                  <line x1="373" y1="142" x2="373" y2="135" stroke="#A78BFA" strokeWidth="2" />
+                  <line x1="368" y1="137" x2="379" y2="137" stroke="#A78BFA" strokeWidth="1.5" />
+                  <line x1="370" y1="134" x2="376" y2="134" stroke="#A78BFA" strokeWidth="1" />
+                  <text x="362" y="158" fill="#C4B5FD" fontSize="7" fontFamily="monospace">ANT</text>
+                  {/* antenna label */}
+                  <line x1="410" y1="153" x2="453" y2="153" stroke="#A78BFA" strokeWidth="1" strokeDasharray="3,2" />
+                  <text x="455" y="153" fill="#A78BFA" fontSize="11" fontFamily="monospace">Wi-Fi Antenna</text>
+                  <text x="455" y="166" fill="#94A3B8" fontSize="9" fontFamily="monospace">2.4 GHz, sends to cloud</text>
+
+                  {/* ── Cable from housing down ── */}
+                  <line x1="350" y1="200" x2="350" y2="240" stroke="#475569" strokeWidth="6" strokeLinecap="round" />
+                  <line x1="350" y1="200" x2="350" y2="240" stroke="#1E293B" strokeWidth="3" strokeLinecap="round" strokeDasharray="4,4" />
+
+                  {/* ── Drain pipe cross-section ── */}
+                  {/* outer pipe wall */}
+                  <rect x="260" y="240" width="180" height="140" rx="6" fill="#1E3A5F" stroke="#0EA5E9" strokeWidth="2" />
+                  {/* inner drain cavity */}
+                  <rect x="270" y="250" width="160" height="120" rx="4" fill="#0C1A2E" />
+                  {/* DRAIN LABEL */}
+                  <line x1="260" y1="310" x2="220" y2="310" stroke="#0EA5E9" strokeWidth="1" strokeDasharray="3,2" />
+                  <text x="100" y="305" fill="#0EA5E9" fontSize="11" fontFamily="monospace">Concrete Drain</text>
+                  <text x="100" y="318" fill="#94A3B8" fontSize="9" fontFamily="monospace">Avg depth 120 cm</text>
+
+                  {/* ── Water level ── */}
+                  {/* full water fill */}
+                  <clipPath id="drainClip">
+                    <rect x="270" y="250" width="160" height="120" rx="4" />
+                  </clipPath>
+                  <rect x="270" y="306" width="160" height="64" rx="0" fill="#0369A1" opacity="0.5" clipPath="url(#drainClip)" />
+                  {/* wave line */}
+                  <path d="M270,306 Q300,300 330,306 Q360,312 390,306 Q420,300 430,304" stroke="#38BDF8" strokeWidth="2" fill="none" />
+                  {/* water level label */}
+                  <line x1="430" y1="306" x2="458" y2="295" stroke="#38BDF8" strokeWidth="1" strokeDasharray="3,2" />
+                  <text x="460" y="295" fill="#38BDF8" fontSize="11" fontFamily="monospace">Water Level</text>
+                  <text x="460" y="308" fill="#94A3B8" fontSize="9" fontFamily="monospace">~55% (HIGH)</text>
+
+                  {/* ── Ultrasonic Sensor facing down ── */}
+                  <rect x="326" y="250" width="48" height="28" rx="4" fill="#134E4A" stroke="#2DD4BF" strokeWidth="1.5" />
+                  {/* two transducer circles */}
+                  <circle cx="339" cy="264" r="7" fill="#0D3331" stroke="#2DD4BF" strokeWidth="1.5" />
+                  <circle cx="361" cy="264" r="7" fill="#0D3331" stroke="#2DD4BF" strokeWidth="1.5" />
+                  <text x="330" y="263" fill="#5EEAD4" fontSize="6" dominantBaseline="middle" textAnchor="middle">TX</text>
+                  <text x="361" y="263" fill="#5EEAD4" fontSize="6" dominantBaseline="middle" textAnchor="middle">RX</text>
+                  {/* ultrasonic label */}
+                  <line x1="290" y1="264" x2="245" y2="255" stroke="#2DD4BF" strokeWidth="1" strokeDasharray="3,2" />
+                  <text x="80" y="255" fill="#2DD4BF" fontSize="11" fontFamily="monospace">Ultrasonic Sensor</text>
+                  <text x="80" y="268" fill="#94A3B8" fontSize="9" fontFamily="monospace">JSN-SR04T (waterproof)</text>
+
+                  {/* ── Sonic beam lines ── */}
+                  {[-16,-8,0,8,16].map((offset, i) => (
+                    <line
+                      key={i}
+                      x1={350 + offset * 0.2}
+                      y1="278"
+                      x2={350 + offset}
+                      y2="302"
+                      stroke="#2DD4BF"
+                      strokeWidth="1"
+                      strokeDasharray="3,3"
+                      opacity="0.7"
+                    />
+                  ))}
+
+                  {/* ── Measurement arrow ── */}
+                  <line x1="430" y1="278" x2="430" y2="305" stroke="#6EE7B7" strokeWidth="1.5" markerEnd="url(#arrowDown)" markerStart="url(#arrowUp)" />
+                  <defs>
+                    <marker id="arrowDown" markerWidth="6" markerHeight="6" refX="3" refY="6" orient="auto">
+                      <path d="M0,0 L3,6 L6,0" fill="#6EE7B7" />
+                    </marker>
+                    <marker id="arrowUp" markerWidth="6" markerHeight="6" refX="3" refY="0" orient="auto">
+                      <path d="M0,6 L3,0 L6,6" fill="#6EE7B7" />
+                    </marker>
+                  </defs>
+                  <text x="435" y="293" fill="#6EE7B7" fontSize="9" fontFamily="monospace">dist</text>
+
+                  {/* ── Temperature / Humidity sensor ── */}
+                  <rect x="279" y="254" width="30" height="18" rx="3" fill="#1E1B4B" stroke="#818CF8" strokeWidth="1.5" />
+                  <text x="284" y="267" fill="#A5B4FC" fontSize="7" fontFamily="monospace">DHT22</text>
+                  {/* label */}
+                  <line x1="279" y1="263" x2="245" y2="280" stroke="#818CF8" strokeWidth="1" strokeDasharray="3,2" />
+                  <text x="70" y="280" fill="#818CF8" fontSize="11" fontFamily="monospace">Temp / Humidity</text>
+                  <text x="70" y="293" fill="#94A3B8" fontSize="9" fontFamily="monospace">DHT22 for rainfall proxy</text>
+
+                  {/* ── Ground spike / anchor ── */}
+                  <rect x="344" y="340" width="12" height="30" rx="2" fill="#475569" />
+                  <polygon points="344,370 356,370 350,385" fill="#475569" />
+                  <line x1="410" y1="370" x2="453" y2="370" stroke="#94A3B8" strokeWidth="1" strokeDasharray="3,2" />
+                  <text x="455" y="370" fill="#94A3B8" fontSize="11" fontFamily="monospace">Ground Anchor</text>
+                  <text x="455" y="383" fill="#64748B" fontSize="9" fontFamily="monospace">Stainless steel spike</text>
+
+                  {/* ── Title ── */}
+                  <text x="350" y="408" fill="#475569" fontSize="10" fontFamily="monospace" textAnchor="middle">SurakshaNet — Flood Sensor Unit (Cross-Section View)</text>
+                </svg>
+              </div>
+
+              {/* Component Table */}
+              <div>
+                <p className="text-white font-semibold mb-3 text-sm">Bill of Components</p>
+                <div className="overflow-x-auto rounded-lg border border-[#334155]">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-[#1E293B] text-[#94A3B8]">
+                        <th className="text-left px-4 py-2 font-medium">#</th>
+                        <th className="text-left px-4 py-2 font-medium">Component</th>
+                        <th className="text-left px-4 py-2 font-medium">Part</th>
+                        <th className="text-left px-4 py-2 font-medium">Role</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#1E293B]">
+                      {[
+                        { color: '#60A5FA', label: '●', name: 'Microcontroller', part: 'ESP32-WROOM-32', role: 'Wi-Fi uplink, risk computation' },
+                        { color: '#2DD4BF', label: '●', name: 'Ultrasonic Sensor', part: 'JSN-SR04T', role: 'Waterproof distance → water level %' },
+                        { color: '#818CF8', label: '●', name: 'Temp / Humidity', part: 'DHT22', role: 'Ambient read, rainfall proxy' },
+                        { color: '#F59E0B', label: '●', name: 'Battery', part: '18650 Li-Ion 3000mAh', role: 'Backup power, 72 hr runtime' },
+                        { color: '#60A5FA', label: '●', name: 'Solar Panel', part: '5V 1W Mono', role: 'Continuous trickle charging' },
+                        { color: '#A78BFA', label: '●', name: 'Wi-Fi Antenna', part: 'External 2.4GHz', role: 'POST readings to cloud API' },
+                        { color: '#94A3B8', label: '●', name: 'Enclosure', part: 'ABS IP68 box', role: 'Weatherproof all electronics' },
+                        { color: '#94A3B8', label: '●', name: 'Mounting', part: 'GI pipe + spike', role: 'Fix unit inside drain wall' },
+                      ].map((row, i) => (
+                        <tr key={i} className="bg-[#0F172A] hover:bg-[#1E293B] transition-colors">
+                          <td className="px-4 py-2 text-[#64748B]">{i + 1}</td>
+                          <td className="px-4 py-2">
+                            <span style={{ color: row.color }} className="mr-1">{row.label}</span>
+                            <span className="text-white">{row.name}</span>
+                          </td>
+                          <td className="px-4 py-2 text-[#94A3B8] font-mono text-xs">{row.part}</td>
+                          <td className="px-4 py-2 text-[#64748B] text-xs">{row.role}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Data Flow */}
+              <div>
+                <p className="text-white font-semibold mb-3 text-sm">Data Flow</p>
+                <div className="flex items-center gap-2 flex-wrap">
+                  {[
+                    { label: 'Ultrasonic Pulse', color: '#2DD4BF' },
+                    { label: '→', color: '#475569' },
+                    { label: 'ESP32 Computes Level %', color: '#10B981' },
+                    { label: '→', color: '#475569' },
+                    { label: 'Wi-Fi POST /api/flood-sensors', color: '#60A5FA' },
+                    { label: '→', color: '#475569' },
+                    { label: 'Risk Score Engine', color: '#F59E0B' },
+                    { label: '→', color: '#475569' },
+                    { label: 'Alert Trigger', color: '#EF4444' },
+                  ].map((step, i) => (
+                    <span
+                      key={i}
+                      className="text-xs px-2 py-1 rounded font-mono"
+                      style={{
+                        color: step.color,
+                        background: step.label === '→' ? 'transparent' : step.color + '18',
+                      }}
+                    >
+                      {step.label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Firmware note */}
+              <div className="bg-[#1E293B] border border-[#334155] rounded-lg px-4 py-3 text-xs text-[#94A3B8] font-mono">
+                <span className="text-[#10B981]">// </span>ESP32 firmware reads ultrasonic every 30s → computes{' '}
+                <span className="text-[#60A5FA]">waterLevelPercent = (drainDepthCm - distanceCm) / drainDepthCm × 100</span>
+                {' '} → POSTs to SurakshaNet API with sensorId + readings
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </GovLayout>
   );
 };

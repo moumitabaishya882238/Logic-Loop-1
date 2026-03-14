@@ -3,7 +3,7 @@ import { Home, Map, AlertTriangle, Camera, CloudLightning, Users, Activity, Hear
 
 export const GovLayout = ({ children }) => {
   const location = useLocation();
-  
+
   const menuItems = [
     { path: '/gov/dashboard', icon: Home, label: 'Dashboard' },
     { path: '/gov/map', icon: Map, label: 'Live Map' },
@@ -14,7 +14,7 @@ export const GovLayout = ({ children }) => {
     { path: '/gov/ngo-partners', icon: HeartHandshake, label: 'NGO Partners' },
     { path: '/gov/ngo-requests', icon: FilePlus2, label: 'NGO Requests' },
   ];
-  
+
   return (
     <div className="gov-theme flex h-screen">
       {/* Sidebar */}
@@ -28,7 +28,7 @@ export const GovLayout = ({ children }) => {
             </div>
           </div>
         </div>
-        
+
         <nav className="flex-1 p-4 space-y-1">
           {menuItems.map((item) => {
             const Icon = item.icon;
@@ -38,11 +38,10 @@ export const GovLayout = ({ children }) => {
                 key={item.path}
                 to={item.path}
                 data-testid={`nav-${item.label.toLowerCase().replace(/\s/g, '-')}`}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-                  isActive
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isActive
                     ? 'bg-[#059669] text-white'
                     : 'text-[#94A3B8] hover:bg-[#334155] hover:text-white'
-                }`}
+                  }`}
               >
                 <Icon className="w-5 h-5" />
                 <span className="font-medium">{item.label}</span>
@@ -50,7 +49,7 @@ export const GovLayout = ({ children }) => {
             );
           })}
         </nav>
-        
+
         <div className="p-4 border-t border-[#334155]">
           <div className="text-center text-xs text-[#64748B]">
             <p className="mb-1">Citizen Access</p>
@@ -58,7 +57,7 @@ export const GovLayout = ({ children }) => {
           </div>
         </div>
       </aside>
-      
+
       {/* Main Content */}
       <main className="flex-1 overflow-auto">
         {children}

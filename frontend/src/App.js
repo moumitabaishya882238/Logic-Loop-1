@@ -11,9 +11,14 @@ import DisasterAlerts from "@/pages/gov/DisasterAlerts";
 import ResponsePanel from "@/pages/gov/ResponsePanel";
 import NGOPartners from "@/pages/gov/NGOPartners";
 import NGORequests from "@/pages/gov/NGORequests";
+import DroneSimulation from "@/pages/gov/DroneSimulation";
 import JoinNGO from "@/pages/ngo/JoinNGO";
 import NGOLogin from "@/pages/ngo/NGOLogin";
 import NGODashboard from "@/pages/ngo/NGODashboard";
+import CitizenHome from "@/pages/citizen/Home";
+import ReportIncident from "@/pages/citizen/ReportIncident";
+import SafetyMap from "@/pages/citizen/SafetyMap";
+import NearbyAlerts from "@/pages/citizen/NearbyAlerts";
 
 function App() {
   return (
@@ -32,11 +37,18 @@ function App() {
           <Route path="/gov/response" element={<ResponsePanel />} />
           <Route path="/gov/ngo-partners" element={<NGOPartners />} />
           <Route path="/gov/ngo-requests" element={<NGORequests />} />
+          <Route path="/gov/drone-simulation/:incidentId" element={<DroneSimulation />} />
 
           {/* NGO onboarding route */}
           <Route path="/ngo/join" element={<JoinNGO />} />
           <Route path="/ngo/login" element={<NGOLogin />} />
           <Route path="/ngo/dashboard" element={<NGODashboard />} />
+
+          {/* Citizen Routes */}
+          <Route path="/citizen" element={<CitizenHome />} />
+          <Route path="/citizen/report" element={<ReportIncident />} />
+          <Route path="/citizen/map" element={<SafetyMap />} />
+          <Route path="/citizen/alerts" element={<NearbyAlerts />} />
         </Routes>
       </BrowserRouter>
       <Toaster />

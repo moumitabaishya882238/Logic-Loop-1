@@ -280,104 +280,116 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#0F172A', // Slate-900 Main background
   },
   heroSection: {
     alignItems: 'center',
-    paddingVertical: 40,
+    paddingVertical: 50,
     paddingHorizontal: 20,
   },
   heroTitle: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#0F172A',
-    marginTop: 16,
+    color: '#F1F5F9', // Slate-100 Text
+    marginTop: 20,
+    letterSpacing: 0.5,
   },
   heroSubtitle: {
     fontSize: 16,
-    color: '#64748B',
-    marginTop: 8,
+    color: '#94A3B8', // Slate-400 Text
+    marginTop: 10,
     textAlign: 'center',
+    lineHeight: 24,
   },
   sosContainer: {
     alignItems: 'center',
-    paddingVertical: 40,
+    paddingVertical: 30,
+    paddingBottom: 50,
   },
   sosButton: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
+    width: 220,
+    height: 220,
+    borderRadius: 110,
     backgroundColor: '#DC2626',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#DC2626',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 8,
+    shadowColor: '#EF4444',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.4,
+    shadowRadius: 20,
+    elevation: 10,
   },
   sosText: {
-    fontSize: 48,
+    fontSize: 56,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    marginTop: 8,
+    letterSpacing: 1,
+  },
+  sosSubtext: {
+    fontSize: 18,
+    color: '#FFFFFF',
+    marginTop: 4,
+    fontWeight: '500',
+  },
+  countdownText: {
+    fontSize: 32,
     fontWeight: '700',
     color: '#FFFFFF',
     marginTop: 8,
   },
-  sosSubtext: {
-    fontSize: 16,
-    color: '#FFFFFF',
-    marginTop: 4,
-  },
-  countdownText: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginTop: 6,
-  },
   statusCard: {
-    backgroundColor: '#EFF6FF',
+    backgroundColor: '#1E293B', // Slate-800 Card
     marginHorizontal: 16,
-    marginBottom: 12,
-    padding: 14,
-    borderRadius: 10,
+    marginBottom: 20,
+    padding: 18,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#DBEAFE',
+    borderColor: '#334155', // Slate-700 Border
+    flexDirection: 'column',
+    alignItems: 'flex-start',
   },
   statusLabel: {
     fontSize: 12,
-    color: '#475569',
+    color: '#94A3B8', // Slate-400 Label
     textTransform: 'uppercase',
     fontWeight: '700',
+    letterSpacing: 0.5,
   },
   statusValue: {
-    fontSize: 14,
-    color: '#1E293B',
-    marginTop: 6,
+    fontSize: 16,
+    color: '#F1F5F9', // Slate-100 Text
+    marginTop: 8,
     fontWeight: '600',
+    lineHeight: 22,
   },
   card: {
-    backgroundColor: '#F1F5F9',
-    margin: 16,
-    padding: 20,
-    borderRadius: 12,
+    backgroundColor: '#1E293B', // Slate-800 Card
+    marginHorizontal: 16,
+    marginBottom: 24,
+    padding: 24,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#334155',
   },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 20,
   },
   cardTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '600',
-    color: '#0F172A',
-    marginLeft: 8,
+    color: '#F1F5F9', // Slate-100 Text
+    marginLeft: 12,
   },
   contactItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
+    borderBottomColor: '#334155', // Slate-700 Border
   },
   contactLeft: {
     flexDirection: 'row',
@@ -385,28 +397,41 @@ const styles = StyleSheet.create({
   },
   contactName: {
     fontSize: 16,
-    color: '#64748B',
-    marginLeft: 12,
+    color: '#CBD5E1', // Lighter Slate Text
+    marginLeft: 16,
+    fontWeight: '500',
   },
   contactNumber: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#2563EB',
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#3B82F6', // Blue-500 emphasis
   },
   infoGrid: {
     flexDirection: 'row',
     paddingHorizontal: 16,
-    gap: 12,
-    marginBottom: 24,
+    gap: 16,
+    marginBottom: 32,
   },
   infoCard: {
-    button: {
-      flex: 1,
-      paddingVertical: 14,
-      borderRadius: 8,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
+    flex: 1,
+    backgroundColor: '#1E293B',
+    padding: 20,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#334155',
+  },
+  infoIconContainer: {
+    marginBottom: 12,
+  },
+  infoTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#F1F5F9',
+    marginBottom: 4,
+  },
+  infoSubtitle: {
+    fontSize: 14,
+    color: '#94A3B8',
   },
   button: {
     flex: 1,
@@ -418,9 +443,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#DC2626',
   },
   buttonSecondary: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#1E293B', // Slate-800 button
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#334155', // Slate-700 border
   },
   buttonTextPrimary: {
     fontSize: 16,
@@ -430,7 +455,7 @@ const styles = StyleSheet.create({
   buttonTextSecondary: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#64748B',
+    color: '#94A3B8', // Slate-400 Text
   },
 });
 

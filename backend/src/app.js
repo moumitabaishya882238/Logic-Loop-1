@@ -3,6 +3,7 @@ const cors = require("cors");
 const env = require("./config/env");
 const { connectToDatabase } = require("./config/db");
 const incidentRoutes = require("./routes/incidentRoutes");
+const aiRoutes = require("./routes/aiRoutes");
 const { notFoundHandler, errorHandler } = require("./middleware/errorHandler");
 
 const app = express();
@@ -12,9 +13,10 @@ app.use(
     origin: env.corsOrigins.includes("*") ? true : env.corsOrigins,
   })
 );
-app.use(express.json({ limit: "15mb" }));
+app.use(express.json({ limit: "50mb" }));
 
 app.use("/api", incidentRoutes);
+app.use("/api/ai", aiRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 

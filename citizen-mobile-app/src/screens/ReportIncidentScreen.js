@@ -182,23 +182,23 @@ const ReportIncidentScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#0F172A', // Slate-900 Main background
   },
   header: {
     alignItems: 'center',
     paddingVertical: 32,
     paddingHorizontal: 20,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#1E293B', // Slate-800 Header Area
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#0F172A',
+    color: '#F1F5F9', // Slate-100 Text
     marginTop: 12,
   },
   headerSubtitle: {
     fontSize: 14,
-    color: '#64748B',
+    color: '#94A3B8', // Slate-400 Text
     marginTop: 8,
   },
   form: {
@@ -207,18 +207,18 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#0F172A',
+    color: '#F1F5F9', // Slate-100 Text
     marginBottom: 8,
     marginTop: 16,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#334155', // Slate-700 Border
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    color: '#0F172A',
-    backgroundColor: '#FFFFFF',
+    color: '#F1F5F9', // Slate-100 Text
+    backgroundColor: '#1E293B', // Slate-800 Card
   },
   textArea: {
     height: 120,
@@ -232,17 +232,17 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    backgroundColor: '#FFFFFF',
+    borderColor: '#334155', // Slate-700
+    backgroundColor: '#1E293B', // Slate-800
   },
   typeButtonActive: {
-    backgroundColor: '#2563EB',
+    backgroundColor: '#2563EB', // Blue-600
     borderColor: '#2563EB',
   },
   typeText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#64748B',
+    color: '#94A3B8', // Slate-400
   },
   typeTextActive: {
     color: '#FFFFFF',
@@ -257,26 +257,26 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    backgroundColor: '#FFFFFF',
+    borderColor: '#334155', // Slate-700
+    backgroundColor: '#1E293B', // Slate-800
   },
   severityButtonActive: {
-    backgroundColor: '#DC2626',
+    backgroundColor: '#DC2626', // Red-600
     borderColor: '#DC2626',
   },
   severityText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#64748B',
+    color: '#94A3B8', // Slate-400
   },
   severityTextActive: {
     color: '#FFFFFF',
   },
   infoBox: {
     flexDirection: 'row',
-    backgroundColor: '#EFF6FF',
+    backgroundColor: '#172554', // Blue-950 Dark Info Box
     borderWidth: 1,
-    borderColor: '#BFDBFE',
+    borderColor: '#1E3A8A', // Blue-900 border
     borderRadius: 8,
     padding: 16,
     marginTop: 24,
@@ -288,15 +288,15 @@ const styles = StyleSheet.create({
   infoTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#1E40AF',
+    color: '#93C5FD', // Blue-300 Light Header
     marginBottom: 4,
   },
   infoText: {
     fontSize: 12,
-    color: '#3B82F6',
+    color: '#60A5FA', // Blue-400 Info Text
   },
   submitButton: {
-    backgroundColor: '#2563EB',
+    backgroundColor: '#059669', // Emerald/Gov theme active green
     borderRadius: 8,
     paddingVertical: 16,
     alignItems: 'center',
@@ -309,9 +309,9 @@ const styles = StyleSheet.create({
   },
   warningBox: {
     flexDirection: 'row',
-    backgroundColor: '#FEF2F2',
+    backgroundColor: '#450A0A', // Red-950 Dark Red Warning Box
     borderWidth: 1,
-    borderColor: '#FEE2E2',
+    borderColor: '#7F1D1D', // Red-900 border
     borderRadius: 8,
     padding: 16,
     marginTop: 16,
@@ -320,12 +320,12 @@ const styles = StyleSheet.create({
   warningTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#DC2626',
+    color: '#FCA5A5', // Red-300 Light Header
     marginBottom: 4,
   },
   warningText: {
     fontSize: 12,
-    color: '#991B1B',
+    color: '#F87171', // Red-400 Text
   },
 });
 

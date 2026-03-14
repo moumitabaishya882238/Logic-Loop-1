@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GovLayout } from '@/components/GovLayout';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
-import { Users, Activity, Clock, MapPin } from 'lucide-react';
+import { Users, Activity, Clock, MapPin, CheckCircle, RadioTower, Navigation } from 'lucide-react';
 import { format } from 'date-fns';
+import { Button } from '@/components/ui/button';
 
 const ResponsePanel = () => {
+  const navigate = useNavigate();
   const [incidents, setIncidents] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -24,6 +27,17 @@ const ResponsePanel = () => {
     } catch (error) {
       console.error('Error fetching response data:', error);
       toast.error('Failed to load response data');
+    }
+  };
+
+  const handleResolve = async (incidentId) => {
+    try {
+      await api.resolveIncident(incidentId);
+      toast.success('Incident marked as resolved');
+      fetchIncidents();
+    } catch (error) {
+      console.error('Error resolving incident:', error);
+      toast.error('Failed to resolve incident');
     }
   };
 
@@ -118,10 +132,23 @@ const ResponsePanel = () => {
                       <div className="flex items-start gap-2">
                         <Users className="w-4 h-4 text-[#94A3B8] mt-0.5" />
                         <div>
-                          <p className="text-[#94A3B8]">Responder ID</p>
-                          <p className="text-white font-medium mono text-xs">
-                            {incident.responderId || 'Not assigned'}
+                          <p className="text-[#94A3B8]">
+                            {incident.responderType === 'DRONE'
+                              ? 'Drone Unit'
+                              : incident.responderType === 'NGO'
+                                ? 'NGO Partner'
+                                : 'Responder'}
                           </p>
+                          <p className="text-white font-medium">
+                            {incident.responderType === 'DRONE'
+                              ? 'Autonomous Drone'
+                              : incident.responderType === 'NGO'
+                                ? (incident.ngoPartner || incident.responderName || 'Assigned')
+                                : (incident.responderName || 'Government Team')}
+                          </p>
+                          {incident.responderType === 'NGO' && incident.ngoDistanceKm != null && (
+                            <p className="text-xs text-[#94A3B8]">{incident.ngoDistanceKm} km away</p>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -145,6 +172,26 @@ const ResponsePanel = () => {
                           </div>
                         )}
                       </div>
+                    </div>
+
+                    <div className="mt-4 pt-4 border-t border-[#334155] flex justify-end gap-3">
+                      {incident.responderType === 'DRONE' && (
+                        <Button
+                          onClick={() => navigate(`/gov/drone-simulation/${incident.id}`)}
+                          className="bg-[#38BDF8] hover:bg-[#0284C7] text-white flex items-center gap-2"
+                        >
+                          <Navigation className="w-4 h-4" />
+                          View Telemetry
+                        </Button>
+                      )}
+                      <Button
+                        onClick={() => handleResolve(incident.id)}
+                        className="bg-[#059669] hover:bg-[#047857] text-white flex items-center gap-2"
+                        data-testid={`resolve-btn-${incident.id}`}
+                      >
+                        <CheckCircle className="w-4 h-4" />
+                        Mark Resolved
+                      </Button>
                     </div>
                   </div>
                 </div>

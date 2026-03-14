@@ -122,7 +122,12 @@ const SafetyMap = () => {
                 </Marker>
               )}
               
-              {incidents.map((incident) => (
+              {incidents
+                .filter((incident) =>
+                  Number.isFinite(Number(incident.location?.lat)) &&
+                  Number.isFinite(Number(incident.location?.lng))
+                )
+                .map((incident) => (
                 <Marker
                   key={incident.id}
                   position={[incident.location.lat, incident.location.lng]}
