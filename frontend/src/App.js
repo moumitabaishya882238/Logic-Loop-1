@@ -14,6 +14,10 @@ import NGORequests from "@/pages/gov/NGORequests";
 import JoinNGO from "@/pages/ngo/JoinNGO";
 import NGOLogin from "@/pages/ngo/NGOLogin";
 import NGODashboard from "@/pages/ngo/NGODashboard";
+import CitizenHome from "@/pages/citizen/Home";
+import ReportIncident from "@/pages/citizen/ReportIncident";
+import SafetyMap from "@/pages/citizen/SafetyMap";
+import NearbyAlerts from "@/pages/citizen/NearbyAlerts";
 
 function App() {
   return (
@@ -37,6 +41,12 @@ function App() {
           <Route path="/ngo/join" element={<JoinNGO />} />
           <Route path="/ngo/login" element={<NGOLogin />} />
           <Route path="/ngo/dashboard" element={<NGODashboard />} />
+
+          {/* Citizen Routes */}
+          <Route path="/citizen" element={<CitizenHome />} />
+          <Route path="/citizen/report" element={<ReportIncident />} />
+          <Route path="/citizen/map" element={<SafetyMap />} />
+          <Route path="/citizen/alerts" element={<NearbyAlerts />} />
         </Routes>
       </BrowserRouter>
       <Toaster />

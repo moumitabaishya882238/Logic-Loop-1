@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { api } from '@/lib/api';
-import { CheckCircle, LogOut, RadioTower, Users } from 'lucide-react';
+import { CheckCircle, LogOut, RadioTower, Users, MapPin, Clock, AlertTriangle } from 'lucide-react';
+import { format } from 'date-fns';
 
 const NGODashboard = () => {
   const navigate = useNavigate();
@@ -157,15 +158,48 @@ const NGODashboard = () => {
           <p className="text-[#94A3B8]">No incidents assigned yet.</p>
         ) : (
           <div className="space-y-3">
-            {incidents.map((incident) => (
-              <div key={incident.id} className="bg-[#0F172A] border border-[#334155] rounded-md p-3">
-                <p className="font-semibold">{incident.description}</p>
-                <p className="text-sm text-[#CBD5E1] mt-1">
-                  {incident.location?.address || `${incident.location?.lat}, ${incident.location?.lng}`}
-                </p>
-                <p className="text-xs text-[#94A3B8] mt-1">Status: {incident.status}</p>
-              </div>
-            ))}
+            {incidents.map((incident) => {
+              const severityColors = {
+                CRITICAL: 'text-red-400 bg-red-500/10 border-red-500/30',
+                HIGH: 'text-orange-400 bg-orange-500/10 border-orange-500/30',
+                MEDIUM: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30',
+                LOW: 'text-blue-400 bg-blue-500/10 border-blue-500/30',
+              };
+              const typeColors = {
+                SOS: 'text-orange-300 bg-orange-500/10',
+                CCTV: 'text-red-300 bg-red-500/10',
+                DISASTER: 'text-blue-300 bg-blue-500/10',
+              };
+              return (
+                <div key={incident.id} className="bg-[#0F172A] border border-[#334155] rounded-md p-4 space-y-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className={`text-xs px-2 py-0.5 rounded font-bold ${typeColors[incident.type] || 'text-gray-300 bg-gray-500/10'}`}>
+                      {incident.type}
+                    </span>
+                    <span className={`text-xs px-2 py-0.5 rounded border font-bold ${severityColors[incident.severity] || 'text-gray-400'}`}>
+                      {incident.severity}
+                    </span>
+                    <span className={`text-xs px-2 py-0.5 rounded ${incident.status === 'ACCEPTED' ? 'text-yellow-400 bg-yellow-500/10' : 'text-green-400 bg-green-500/10'}`}>
+                      {incident.status}
+                    </span>
+                  </div>
+                  <p className="font-semibold text-white">{incident.description}</p>
+                  <div className="flex items-center gap-4 text-xs text-[#94A3B8]">
+                    <span className="flex items-center gap-1">
+                      <MapPin className="w-3 h-3" />
+                      {incident.location?.address || `${incident.location?.lat?.toFixed(4)}, ${incident.location?.lng?.toFixed(4)}`}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {format(new Date(incident.timestamp), 'dd MMM HH:mm')}
+                    </span>
+                  </div>
+                  {incident.responderName && (
+                    <p className="text-xs text-[#64748B]">Assigned to: {incident.responderName}</p>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

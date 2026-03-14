@@ -103,7 +103,12 @@ const LiveMap = () => {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
               
-              {incidents.map((incident) => (
+              {incidents
+                .filter((incident) =>
+                  Number.isFinite(Number(incident.location?.lat)) &&
+                  Number.isFinite(Number(incident.location?.lng))
+                )
+                .map((incident) => (
                 <Marker
                   key={incident.id}
                   position={[incident.location.lat, incident.location.lng]}
@@ -124,7 +129,7 @@ const LiveMap = () => {
                       </div>
                       <h3 className="font-bold mb-1">{incident.description}</h3>
                       <p className="text-sm text-gray-600 mb-2">
-                        {incident.location.address || `${incident.location.lat}, ${incident.location.lng}`}
+                        {incident.location?.address || `${Number(incident.location.lat).toFixed(4)}, ${Number(incident.location.lng).toFixed(4)}`}
                       </p>
                       <p className="text-xs text-gray-500">
                         {format(new Date(incident.timestamp), 'dd MMM yyyy HH:mm:ss')}
